@@ -1,15 +1,28 @@
-<nav class="pagination">
-  {% capture category_name %}{{ page.categories | first }}{% endcapture %}
-  {% for post in site.categories.[category_name] %}
-    {% if post.url == page.url %}
-      {% assign post_index0 = forloop.index0 %}
-      {% assign post_index1 = forloop.index %}
+{% if paginator.total_pages > 1 %}
+<div class="pagination">
+  {% if paginator.previous_page %}
+    <a class="ml-1 mr-1" href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&laquo; </a>
+  {% else %}
+    <span>&laquo; </span>
+  {% endif %}
+
+  {% assign from = paginator.page | minus: 3 | at_least: 1 %}
+  {% assign to = from | plus: 3 | at_most: paginator.total_pages %}
+
+  {% for page in (from..to) %}
+    {% if page == paginator.page %}
+      <span class="ml-1 mr-1">{{ page }}</span>
+    {% elsif page == 1 %}
+      <a class="ml-1 mr-1" href="{{ site.baseurl | append: '/' | replace: '//', '/' }}">{{ page }}</a>
+    {% else %}
+      <a class="ml-1 mr-1" href="{{ site.paginate_path | prepend: site.baseurl | replace: '//', '/' | replace: ':num', page }}">{{ page }}</a>
     {% endif %}
   {% endfor %}
-  {% for post in site.categories.[category_name] %}
-    {% if post_index0 == forloop.index %}{% assign next_post = post %}{% endif %}
-    {% if post_index1 == forloop.index0 %}{% assign prev_post = post %}{% endif %}
-  {% endfor %}
-  {% if prev_post %}<a class="prev" href="{{ site.url }}{{ prev_post.url }}">{{ prev_post.title }}</a>{% endif %}
-  {% if next_post %}<a class="next" href="{{ site.url }}{{ next_post.url }}">{{ next_post.title }}</a>{% endif %}
-</nav>
+
+  {% if paginator.next_page %}
+    <a class="ml-1 mr-1" href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}"> &raquo;</a>
+  {% else %}
+    <span> &raquo;</span>
+  {% endif %}
+</div>
+{% endif %}
